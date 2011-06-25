@@ -272,7 +272,7 @@
 			}
 			titoTMH.clearSelection();
 		  },
-		  //returns an array with the views of the selected tabs
+		  //returns an array of the selected tabs
 		  getSelectedTabs:function()
 		  {
 			var views = gBrowser.tabContainer.childNodes;
@@ -287,9 +287,7 @@
 			}
 			return tabs;
 		  },
-		  //returns an array with the views of the NON-selected tabs
-		  //the array will contain all the non-selected tabs from all the views if the selection comes from multiples browsers.
-		  //the array will contain all the non-selected tabs from the current browser if the selection comes from only one browser.
+		  //returns an array of NON-selected tabs
 		  getNonSelectedTabs:function()
 		  {
 			var views = gBrowser.tabContainer.childNodes;
