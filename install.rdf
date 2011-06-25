@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+	
+    <Description about="urn:mozilla:install-manifest">
+        <em:id>tito@tabmultiplehandler</em:id>
+        <em:name>Tab Multiple Handler</em:name>
+        <em:version>0</em:version>
+        <em:description>Adds the ability to close and reload mutliples tabs at once.</em:description>
+        <em:creator>Tito Bouzout</em:creator>
+		<em:homepageURL>https://github.com/titoBouzout/seamonkey-tab-multiple-handler</em:homepageURL>
+
+		<!-- new SeaMonkey -->
+		<em:targetApplication>
+			<Description>
+				<em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
+				<em:minVersion>2.0</em:minVersion>
+				<em:maxVersion>10</em:maxVersion>
+			</Description>
+		</em:targetApplication>
+    </Description>
+	
+</RDF>

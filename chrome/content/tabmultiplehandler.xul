@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overlay  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ 
+	<script type="application/x-javascript">
+  	  <![CDATA[
+	  /*
+		improvements more than welcome please submit these to github, regards
+	  */
+	  
+		var titoTMH = {
+		  
+		  _allowSelectionTimer :false,
+		  _selection: [],
+		  
+		  load:function()
+		  {
+			removeEventListener('load', titoTMH.load, false);
+	  		document.addEventListener('mouseup', titoTMH._mouseup, true);
+			titoTMH.tabbox = document.getAnonymousElementByAttribute(titoTMH._el('content'), 'anonid', 'strip');
+			titoTMH.tabbox.addEventListener('mousedown', titoTMH._mousedown, true);
+		  },
+		  unload:function()
+		  {
+			document.removeEventListener('mouseup', titoTMH._mouseup, true);
+			titoTMH.tabbox.removeEventListener('mousedown', titoTMH._mousedown, true);
+		  },
+		  _mousedown:function(aEvent)
+		  {
+			if(aEvent.button != 0){}
+			else
+			{
+			  var tab = titoTMH._getTab(aEvent.originalTarget);
+			  if(tab)
+			  {
+				//after some mseconds wihtout moving the mouse: cancel all drag events, listeng mousemove and select hovered tabs
+				titoTMH._allowSelectionTimer = setTimeout(function(){ titoTMH._selectingStart();}, 220);
+				document.addEventListener('mousemove', titoTMH._selectingCancel, true);
+				titoTMH._selectedFirstTab = tab;
+				titoTMH._selection = [];
+			  }
+			}
+		  },
+		  _selectingCancel:function()
+		  {
+			try{clearTimeout(titoTMH._allowSelectionTimer);}catch(e){}
+			document.removeEventListener('mousemove', titoTMH._selectingCancel, true);
+		  },
+		  _selectingStart:function()
+		  {			
+			if(titoTMH._selectedFirstTab)
+			{
+			  titoTMH._selectedFirstTab.setAttribute('tab-multiple-handler-selected', true);
+			  titoTMH._lastSelectedTab = titoTMH._selectedFirstTab;
+			  titoTMH._selection[titoTMH._selection.length] = titoTMH._selectedFirstTab;
+			}
+			
+			document.removeEventListener('mousemove', titoTMH._selectingCancel, true);
+			titoTMH.tabbox.addEventListener('mousemove', titoTMH._selectingSelect, true);
+			titoTMH._eventsStop();
+		  },
+
+		  _selectingSelect:function(aEvent)
+		  {
+			if(aEvent.button != 0){}
+			else
+			{
+			  aEvent.preventDefault();
+			  aEvent.stopPropagation();
+			  var tab = titoTMH._getTab(aEvent.originalTarget);
+			  if(tab)
+			  {
+				if(tab != titoTMH._lastSelectedTab)
+				{
+				  titoTMH._lastSelectedTab = tab;
+				  if(tab.hasAttribute('tab-multiple-handler-selected'))
+				  {
+					tab.removeAttribute('tab-multiple-handler-selected')
+					for(var id in  titoTMH._selection)
+					{
+					  if(titoTMH._selection[id] == tab)
+					  {
+						titoTMH._selection[id] = null;
+						break;
+					  }
+					}
+				  }
+				  else
+				  {
+					tab.setAttribute('tab-multiple-handler-selected', true)
+					titoTMH._selection[titoTMH._selection.length] = tab;
+				  }
+				}
+			  }
+			  else
+			  {
+				titoTMH._lastSelectedTab = false;
+			  }
+			}
+		  },
+		  _mouseup:function(aEvent)
+		  {
+			titoTMH._eventsAllow();
+			try{clearTimeout(titoTMH._allowSelectionTimer);}catch(e){}
+			titoTMH.tabbox.removeEventListener('mousemove', titoTMH._selectingSelect, true);
+			
+			if(titoTMH._selection.length)
+			{
+			  var aContextMenu = titoTMH._el('titoTMH');
+			  if(
+				 aEvent.originalTarget.parentNode &&
+				 aEvent.originalTarget.parentNode != aContextMenu
+			  )
+			  {
+				aEvent.stopPropagation();
+				aEvent.preventDefault();
+			  }
+			  
+			  var thereIsContent = false;
+			  for(var id in titoTMH._selection)
+			  {
+				if(!titoTMH._selection[id])
+				  continue;
+				thereIsContent = true;
+			  }
+			  if(thereIsContent)
+			  {
+				
+				var selectedTabs = titoTMH.getSelectedTabs();
+				var nonSelectedTabs = titoTMH.getNonSelectedTabs();
+				
+				for(var i=0;i<aContextMenu.childNodes.length;i++)
+				{
+				  var item = aContextMenu.childNodes[i];
+				  var disabledIf = item.hasAttribute('disabledIf') ? item.getAttribute('disabledIf') : '';
+				//disabling:
+				  
+				  if(nonSelectedTabs.length == 0 && disabledIf.indexOf('noOthers') != -1)
+					item.setAttribute('disabled', true);
+				  else
+					item.removeAttribute('disabled');
+					
+				//changing label:
+				  if(selectedTabs.length == 1)
+				  {
+					 if(item.hasAttribute('labelSelectedSingle'))
+					  item.setAttribute('label', item.getAttribute('labelSelectedSingle'));
+				  }
+				  else
+				  {
+					 if(item.hasAttribute('labelSelectedMultiple'))
+					  item.setAttribute('label', item.getAttribute('labelSelectedMultiple'));
+				  }
+				  
+				  if(nonSelectedTabs.length == 1)
+				  {
+					 if(item.hasAttribute('labelNonSelectedSingle'))
+					  item.setAttribute('label', item.getAttribute('labelNonSelectedSingle'));
+				  }
+				  else if(nonSelectedTabs.length == 0)
+				  {
+					 if(item.hasAttribute('labelNonSelectedNone'))
+					  item.setAttribute('label', item.getAttribute('labelNonSelectedNone'));
+				  }
+				  else//multiple
+				  {
+					 if(item.hasAttribute('labelNonSelectedMultiple'))
+					  item.setAttribute('label', item.getAttribute('labelNonSelectedMultiple'));
+				  }
+				}
+  
+				aContextMenu.openPopupAtScreen(aEvent.screenX, aEvent.screenY, true);
+			  }
+			  else
+			  {
+				titoTMH.clearSelection();
+			  }
+			}
+		  },
+		  clearSelection:function()
+		  {
+			for(var id in titoTMH._selection)
+			{
+			  if(!titoTMH._selection[id])
+				continue;
+			  titoTMH._selection[id].removeAttribute('tab-multiple-handler-selected');
+			}
+			titoTMH._selection = [];
+		  },
+		  onCommand:function(aElement)
+		  {
+			var aCommand = aElement.getAttribute('action');
+			
+			switch(aCommand)
+			{
+			  case 'close' :
+				{
+				  var views = titoTMH.getSelectedTabs();
+				  
+				  for(var i=0;i<views.length;i++)
+					gBrowser.removeTab(views[i]);
+				  
+				  break;
+				}
+			  case 'close-others' :
+				{
+				  var views = titoTMH.getNonSelectedTabs();
+				  
+				  for(var i=0;i<views.length;i++)
+					gBrowser.removeTab(views[i]);
+					
+				  break;
+				}
+			  case 'reload' :
+				{
+				  var views = titoTMH.getSelectedTabs();
+				  
+				  for(var i=0;i<views.length;i++)
+					 gBrowser.getBrowserForTab(views[i]).reload();
+				  
+				  break;
+				}
+			  case 'reload-others' :
+				{
+				  var views = titoTMH.getNonSelectedTabs();
+				  
+				  for(var i=0;i<views.length;i++)
+					 gBrowser.getBrowserForTab(views[i]).reload();
+				  
+				  break;
+				}
+				
+			  case 'bookmark' :
+				{
+				  var views = titoTMH.getSelectedTabs();
+				  
+				  for(var i=0;i<views.length;i++)
+				  {
+					var browserSpecs = gBrowser.getBrowserForTab(views[i]).webNavigation;
+					if (window.BookmarksUtils && BookmarksUtils.addBookmarkForBrowser)
+					  BookmarksUtils.addBookmarkForBrowser(browserSpecs, true);
+					else if (window.addBookmarkForBrowser)
+					  addBookmarkForBrowser(browserSpecs);
+					else if (window.PlacesCommandHook && window.PlacesUtils)
+					  PlacesCommandHook.bookmarkPage(gBrowser.getBrowserForTab(views[i]),
+													 PlacesUtils.bookmarksMenuFolderId, true);
+				  }
+				  
+				  break;
+				}
+
+			  case 'copy-to-clipboard-urls':
+				{
+				  var views = titoTMH.getSelectedTabs();
+				  var urls = [];
+				  for(var i=0;i<views.length;i++)
+				  {
+					urls[urls.length] = gBrowser.getBrowserForTab(views[i]).currentURI.spec;
+				  }
+				  if(urls.length > 0)
+				  {
+					var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
+							.getService(Components.interfaces.nsIClipboardHelper);
+						clipboard.copyString(urls.join('\n'));
+				  }
+				  break;
+				}
+				
+			  case 'your-command-welcome-here' :
+				{
+				  break;
+				}
+			}
+			titoTMH.clearSelection();
+		  },
+		  //returns an array with the views of the selected tabs
+		  getSelectedTabs:function()
+		  {
+			var views = gBrowser.tabContainer.childNodes;
+			var tabs = [];
+			
+			for(var i=0;i<views.length;i++)
+			{
+			  if(gBrowser.tabContainer.childNodes[i].hasAttribute('tab-multiple-handler-selected'))
+			  {
+				tabs[tabs.length] = gBrowser.tabContainer.childNodes[i];
+			  }
+			}
+			return tabs;
+		  },
+		  //returns an array with the views of the NON-selected tabs
+		  //the array will contain all the non-selected tabs from all the views if the selection comes from multiples browsers.
+		  //the array will contain all the non-selected tabs from the current browser if the selection comes from only one browser.
+		  getNonSelectedTabs:function()
+		  {
+			var views = gBrowser.tabContainer.childNodes;
+			var tabs = [];
+			
+			for(var i=0;i<views.length;i++)
+			{
+			  if(!gBrowser.tabContainer.childNodes[i].hasAttribute('tab-multiple-handler-selected'))
+			  {
+				tabs[tabs.length] = gBrowser.tabContainer.childNodes[i];
+			  }
+			}
+			return tabs;
+		  },
+		  _eventsStop:function()
+		  {
+			titoTMH.tabbox.addEventListener('dragstart', titoTMH._eventStop, true);
+			titoTMH.tabbox.addEventListener('dragover', titoTMH._eventStop, true);
+			titoTMH.tabbox.addEventListener('dragenter', titoTMH._eventStop, true);
+			titoTMH.tabbox.addEventListener('drop', titoTMH._eventStop, true);
+			titoTMH.tabbox.addEventListener('dragdrop', titoTMH._eventStop, true);
+			titoTMH.tabbox.addEventListener('dragexit', titoTMH._eventStop, true);
+		  },
+		  _eventsAllow:function()
+		  {
+			titoTMH.tabbox.removeEventListener('dragstart', titoTMH._eventStop, true);
+			titoTMH.tabbox.removeEventListener('dragover', titoTMH._eventStop, true);
+			titoTMH.tabbox.removeEventListener('dragenter', titoTMH._eventStop, true);
+			titoTMH.tabbox.removeEventListener('drop', titoTMH._eventStop, true);
+			titoTMH.tabbox.removeEventListener('dragdrop', titoTMH._eventStop, true);
+			titoTMH.tabbox.removeEventListener('dragexit', titoTMH._eventStop, true);
+		  },
+		  _eventStop:function(aEvent)
+		  {
+			aEvent.stopPropagation();
+			aEvent.preventDefault();
+		  },
+		  _getTab:function(aNode)
+		  {
+			try
+			{
+			  if(aNode.tagName == 'tab' || aNode.tagName == 'xul:tab' )
+				return aNode;
+			  else if(aNode.parentNode.tagName == 'tab' || aNode.parentNode.tagName == 'xul:tab')
+				return aNode.parentNode;
+			  else if(aNode.parentNode.parentNode.tagName == 'tab' || aNode.parentNode.parentNode.tagName == 'xul:tab')
+				return aNode.parentNode.parentNode;
+			  else if(aNode.parentNode.parentNode.parentNode.tagName == 'tab' || aNode.parentNode.parentNode.parentNode.tagName == 'xul:tab' )
+				return aNode.parentNode.parentNode.parentNode;
+			  else
+				return false;
+			}
+			catch(e)
+			{
+			  return false;
+			}
+		  },
+		  _el:function(aElement)
+		  {
+			return document.getElementById(aElement);
+		  }
+		};
+  
+		window.addEventListener('load', titoTMH.load, false);
+		window.addEventListener('unload', titoTMH.unload, false);
+	  ]]>
+	</script>
+	
+	<window id="main-window">
+		
+		<menupopup id="titoTMH" onpopuphidden="titoTMH.clearSelection(this)">
+		  <menuitem
+					label="Close selected tabs"
+					labelSelectedMultiple="Close selected tabs"
+					labelSelectedSingle="Close the tab"
+					
+					action="close"
+					oncommand="titoTMH.onCommand(this)"/>
+		  <menuitem
+					label="Reload selected tabs"
+					labelSelectedMultiple="Reload selected tabs"
+					labelSelectedSingle="Reload the tab"
+					
+					action="reload"
+					oncommand="titoTMH.onCommand(this)"/>
+		  <menuitem
+					label="Bookmark selected tabs"
+					labelSelectedMultiple="Bookmark selected tabs"
+					labelSelectedSingle="Bookmark the tab"
+					
+					action="bookmark"
+					oncommand="titoTMH.onCommand(this)"/>
+		  <menuitem
+					label="Copy URLs to clipboard"
+					labelSelectedMultiple="Copy URLs to clipboard"
+					labelSelectedSingle="Copy URL to clipboard"
+					
+					action="copy-to-clipboard-urls"
+					oncommand="titoTMH.onCommand(this)"/>
+		  
+		  <menuseparator/>
+		  <menuitem
+					label="Close other tabs"
+					labelNonSelectedMultiple="Close other tabs"
+					labelNonSelectedSingle="Close the other tab"
+					labelNonSelectedNone="Close other tabs"
+					
+					disabledIf="noOthers"
+					
+					action="close-others"
+					oncommand="titoTMH.onCommand(this)"/>
+		  <menuitem
+					label="Reload other tabs"
+					labelNonSelectedMultiple="Reload other tabs"
+					labelNonSelectedSingle="Reload the other tab"
+					labelNonSelectedNone="Reload other tabs"
+					
+					disabledIf="noOthers"
+					
+					action="reload-others"
+					oncommand="titoTMH.onCommand(this)"/>
+
+		</menupopup>
+  
+	</window>
+</overlay>
