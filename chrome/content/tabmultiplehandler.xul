@@ -122,6 +122,7 @@
 				if(!titoTMH._selection[id])
 				  continue;
 				somethingIsSelected = true;
+				break;
 			  }
 			  if(somethingIsSelected)
 			  {
