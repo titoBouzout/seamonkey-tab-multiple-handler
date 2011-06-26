@@ -16,14 +16,14 @@
 		  {
 			window.removeEventListener('load', titoTMH.load, false);
 	  		document.addEventListener('mouseup', titoTMH._mouseup, true);
-			titoTMH.tabbox = document.getAnonymousElementByAttribute(titoTMH._el('content'), 'anonid', 'strip');
-			titoTMH.tabbox.addEventListener('mousedown', titoTMH._mousedown, true);
+			titoTMH.tabstrip = document.getAnonymousElementByAttribute(titoTMH._el('content'), 'anonid', 'strip');
+			titoTMH.tabstrip.addEventListener('mousedown', titoTMH._mousedown, true);
 		  },
 		  unload:function()
 		  {
 			window.removeEventListener('unload', titoTMH.unload, false);
 			document.removeEventListener('mouseup', titoTMH._mouseup, true);
-			titoTMH.tabbox.removeEventListener('mousedown', titoTMH._mousedown, true);
+			titoTMH.tabstrip.removeEventListener('mousedown', titoTMH._mousedown, true);
 		  },
 		  _mousedown:function(aEvent)
 		  {
@@ -56,7 +56,7 @@
 			}
 			
 			document.removeEventListener('mousemove', titoTMH._selectingCancel, true);
-			titoTMH.tabbox.addEventListener('mousemove', titoTMH._selectingSelect, true);
+			titoTMH.tabstrip.addEventListener('mousemove', titoTMH._selectingSelect, true);
 			titoTMH._eventsStop();
 		  },
 
@@ -102,7 +102,7 @@
 		  {
 			titoTMH._eventsAllow();
 			try{clearTimeout(titoTMH._allowSelectionTimer);}catch(e){}
-			titoTMH.tabbox.removeEventListener('mousemove', titoTMH._selectingSelect, true);
+			titoTMH.tabstrip.removeEventListener('mousemove', titoTMH._selectingSelect, true);
 			
 			if(titoTMH._selection.length)
 			{
@@ -305,21 +305,21 @@
 		  },
 		  _eventsStop:function()
 		  {
-			titoTMH.tabbox.addEventListener('dragstart', titoTMH._eventStop, true);
-			titoTMH.tabbox.addEventListener('dragover', titoTMH._eventStop, true);
-			titoTMH.tabbox.addEventListener('dragenter', titoTMH._eventStop, true);
-			titoTMH.tabbox.addEventListener('drop', titoTMH._eventStop, true);
-			titoTMH.tabbox.addEventListener('dragdrop', titoTMH._eventStop, true);
-			titoTMH.tabbox.addEventListener('dragexit', titoTMH._eventStop, true);
+			titoTMH.tabstrip.addEventListener('dragstart', titoTMH._eventStop, true);
+			titoTMH.tabstrip.addEventListener('dragover', titoTMH._eventStop, true);
+			titoTMH.tabstrip.addEventListener('dragenter', titoTMH._eventStop, true);
+			titoTMH.tabstrip.addEventListener('drop', titoTMH._eventStop, true);
+			titoTMH.tabstrip.addEventListener('dragdrop', titoTMH._eventStop, true);
+			titoTMH.tabstrip.addEventListener('dragexit', titoTMH._eventStop, true);
 		  },
 		  _eventsAllow:function()
 		  {
-			titoTMH.tabbox.removeEventListener('dragstart', titoTMH._eventStop, true);
-			titoTMH.tabbox.removeEventListener('dragover', titoTMH._eventStop, true);
-			titoTMH.tabbox.removeEventListener('dragenter', titoTMH._eventStop, true);
-			titoTMH.tabbox.removeEventListener('drop', titoTMH._eventStop, true);
-			titoTMH.tabbox.removeEventListener('dragdrop', titoTMH._eventStop, true);
-			titoTMH.tabbox.removeEventListener('dragexit', titoTMH._eventStop, true);
+			titoTMH.tabstrip.removeEventListener('dragstart', titoTMH._eventStop, true);
+			titoTMH.tabstrip.removeEventListener('dragover', titoTMH._eventStop, true);
+			titoTMH.tabstrip.removeEventListener('dragenter', titoTMH._eventStop, true);
+			titoTMH.tabstrip.removeEventListener('drop', titoTMH._eventStop, true);
+			titoTMH.tabstrip.removeEventListener('dragdrop', titoTMH._eventStop, true);
+			titoTMH.tabstrip.removeEventListener('dragexit', titoTMH._eventStop, true);
 		  },
 		  _eventStop:function(aEvent)
 		  {
