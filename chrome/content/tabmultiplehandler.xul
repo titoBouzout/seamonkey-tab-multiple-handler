@@ -14,13 +14,14 @@
 		  
 		  load:function()
 		  {
-			removeEventListener('load', titoTMH.load, false);
+			window.removeEventListener('load', titoTMH.load, false);
 	  		document.addEventListener('mouseup', titoTMH._mouseup, true);
 			titoTMH.tabbox = document.getAnonymousElementByAttribute(titoTMH._el('content'), 'anonid', 'strip');
 			titoTMH.tabbox.addEventListener('mousedown', titoTMH._mousedown, true);
 		  },
 		  unload:function()
 		  {
+			window.removeEventListener('unload', titoTMH.unload, false);
 			document.removeEventListener('mouseup', titoTMH._mouseup, true);
 			titoTMH.tabbox.removeEventListener('mousedown', titoTMH._mousedown, true);
 		  },
@@ -32,7 +33,7 @@
 			  var tab = titoTMH._getTab(aEvent.originalTarget);
 			  if(tab)
 			  {
-				//after some mseconds wihtout moving the mouse: cancel all drag events, listeng mousemove and select hovered tabs
+				//after some milliseconds without moving the mouse: cancel all drag events, listen mousemove and select hovered tabs
 				titoTMH._allowSelectionTimer = setTimeout(function(){ titoTMH._selectingStart();}, 220);
 				document.addEventListener('mousemove', titoTMH._selectingCancel, true);
 				titoTMH._selectedFirstTab = tab;
