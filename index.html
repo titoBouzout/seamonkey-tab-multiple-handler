@@ -3,7 +3,7 @@
 <head>
   <meta charset='utf-8'>
 
-  <title>titoBouzout/seamonkey-tab-multiple-handler @ GitHub</title>
+  <title>SeaMonkey Tab Multiple Handler</title>
 
   <style type="text/css">
     body {
@@ -16,6 +16,7 @@
       margin: 0 auto;
       width: 700px;
     }
+
     h1 { font-size: 3.8em; color: #732081; margin-bottom: 3px; }
     h1 .small { font-size: 0.4em; }
     h1 a { text-decoration: none }
@@ -27,6 +28,14 @@
     pre { background: #000; color: #fff; padding: 15px;}
     hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
     .footer { text-align:center; padding-top:30px; font-style: italic; }
+	
+	.install
+	{
+	  padding:15px !important;
+	  background-color:#732081 !important;
+	  color:#8cdf7e !important;
+	  border-radius:17px !important;
+	}
   </style>
 </head>
 
@@ -36,44 +45,141 @@
   <div id="container">
 
     <div class="download">
-      <a href="http://github.com/titoBouzout/seamonkey-tab-multiple-handler/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/titoBouzout/seamonkey-tab-multiple-handler/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+      <a href="https://github.com/titoBouzout/seamonkey-tab-multiple-handler/blob/master/tabMultipleHandler.xpi?raw=true">
+		<h3 class="install">Install add-on</h3>
+	  </a>
     </div>
 
-    <h1><a href="http://github.com/titoBouzout/seamonkey-tab-multiple-handler">seamonkey-tab-multiple-handler</a>
+    <h1><a href="http://titobouzout.github.com/seamonkey-tab-multiple-handler/">SeaMonkey "Tab Multiple Handler"</a>
       <span class="small">by <a href="http://github.com/titoBouzout">titoBouzout</a></span></h1>
 
     <div class="description">
       Adds the ability to select multiples tabs to close and reload these.
     </div>
 
-    <p>Main Project Text</p><h2>Dependencies</h2>
-<p>Dependencies</p>
-<h2>Install</h2>
-<p>Installation Instructions</p>
-<h2>License</h2>
-<p>GPLv 3</p>
-<h2>Authors</h2>
-<p>Tito Bouzout (tito.bouzout@gmail.com)<br/><br/>      </p>
-<h2>Contact</h2>
-<p>Roberto Bouzout (tito) (titodp@gmail.com)</p>
-
-
-    <h2>Download</h2>
     <p>
-      You can download this project in either
-      <a href="http://github.com/titoBouzout/seamonkey-tab-multiple-handler/zipball/master">zip</a> or
-      <a href="http://github.com/titoBouzout/seamonkey-tab-multiple-handler/tarball/master">tar</a> formats.
-    </p>
+The idea of this extension comes from one of my favorites Firefox add-ons by piro <a href="http://piro.sakura.ne.jp/xul/_multipletab.html.en">http://piro.sakura.ne.jp/xul/_multipletab.html.en</a>
+</p>
+	
+<p>
+I started to build this extension for Komodo Edit (see: <a href="http://www.activestate.com/komodo-edit">http://www.activestate.com/komodo-edit</a> ), then I noticed that SeaMonkey users will benefit from making very little changes to this code.
+</p>
+
+<h2>Usage</h2>
+<p>
+Usage is very simple, you just click and hold your mouse a little bit, the selection of tabs will starts after 200ms. You just move your mouse hover the tabs you want to select and when you just release the click a popup with options will appear.
+</p>
+
+<img src="screenshot.png" border="0"/>
+
+<h2>Installation Instructions</h2>
+<p>By clicking the <a href="https://github.com/titoBouzout/seamonkey-tab-multiple-handler/blob/master/tabMultipleHandler.xpi?raw=true">install button</a> you will be asked to download the XPI file. After downloading the file, you just drop the file into your browser and an installation prompt will popup.</p>
+
+<h2>API</h2>
+<p>
+  You can extend this add-on by adding new commands for selected and non selected tabs.<br/>
+  <br/>
+  
+  An example for <b>selected tabs</b>:
+  <pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;overlay xmlns=&quot;http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul&quot;&gt;
+  &lt;window id=&quot;main-window&quot;&gt;
+	&lt;menupopup id=&quot;titoTMH&quot;&gt;
+	  <b>&lt;menuitem
+		label=&quot;My command for selected tabs&quot;
+		labelSelectedMultiple=&quot;My command for selected tabs&quot;
+		labelSelectedSingle=&quot;My command for the selected tab&quot;
+		
+		oncommand=&quot;myExt.myCommand()&quot;/&gt;</b>
+	&lt;/menupopup&gt;
+  &lt;/window&gt;
+&lt;/overlay&gt;
+  </pre>
+  
+  Then define your command with something like this:
+  
+  <pre>
+myExt.myCommand = function ()
+{
+  var selectedTabs = titoTMH.getSelectedTabs();
+  for(var i=0;i&lt;selectedTabs.length;i++)
+  {
+	alert(&apos;User has selected the tab with URL: &apos;+
+	  gBrowser.getBrowserForTab(selectedTabs[i]).currentURI.spec
+	);
+  }
+}
+  </pre>
+  
+  <hr>
+  You can also extend this extension for the <b>NON-selected tabs</b>.<br/>
+  Notice that the custom attribute "disabledIf" tell the extension that the menuitem should be disabled if "no other tabs" exists.
+  <pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;overlay xmlns=&quot;http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul&quot;&gt;
+  &lt;window id=&quot;main-window&quot;&gt;
+	&lt;menupopup id=&quot;titoTMH&quot;&gt;
+	  <b>&lt;menuitem
+		label=&quot;My command for NON-selected tabs&quot;
+		labelNonSelectedMultiple=&quot;My command for NON-selected tabs&quot;
+		labelNonSelectedSingle=&quot;My command for the NON-selected tab&quot;
+		labelNonSelectedNone=&quot;My command for NON-selected tabs&quot;
+		
+		disabledIf=&quot;noOthers&quot;
+		oncommand=&quot;myExt.myCommand()&quot;/&gt;</b>
+	&lt;/menupopup&gt;
+  &lt;/window&gt;
+&lt;/overlay&gt;
+  </pre>
+    Then define your command with something like this:
+  
+  <pre>
+myExt.myCommand = function ()
+{
+  var nonSelectedTabs = titoTMH.getNonSelectedTabs();
+  for(var i=0;i&lt;nonSelectedTabs.length;i++)
+  {
+	alert(&apos;User has omitted from the selection, the tab with URL: &apos;+
+	  gBrowser.getBrowserForTab(nonSelectedTabs[i]).currentURI.spec
+	);
+  }
+}
+  </pre>
+</p>
+
+<h2>General Info</h2>
+<p>
+License:
+GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+</p>
+<p>
+Source-code:
+https://github.com/titoBouzout/seamonkey-tab-multiple-handler
+</p>
+<p>
+Home-page:
+http://titobouzout.github.com/seamonkey-tab-multiple-handler/
+</p>
+<p>
+mozillaZine thread:
+http://forums.mozillazine.org/viewtopic.php?f=3&t=2236433
+
+</p>
+	
+
+
+
+
+    <h2>Source-Code</h2>
     <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
       by running:
       <pre>$ git clone git://github.com/titoBouzout/seamonkey-tab-multiple-handler</pre>
+	  Contributions to the code are very welcome.
     </p>
 
     <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/titoBouzout/seamonkey-tab-multiple-handler">titoBouzout/seamonkey-tab-multiple-handler</a>
+      Hosting provided by <a href="http://github.com/">GitHub</a>
     </div>
 
   </div>
