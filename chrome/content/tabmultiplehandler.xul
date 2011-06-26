@@ -270,6 +270,11 @@
 				{
 				  break;
 				}
+			  default:
+			  {
+				throw new Error('onCommand method received an element on which aCommand "'+aCommand+'" was not found on switch');
+				break;
+			  }
 			}
 			titoTMH.clearSelection();
 		  },
