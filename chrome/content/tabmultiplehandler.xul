@@ -116,14 +116,14 @@
 				aEvent.preventDefault();
 			  }
 			  
-			  var thereIsContent = false;
+			  var somethingIsSelected = false;
 			  for(var id in titoTMH._selection)
 			  {
 				if(!titoTMH._selection[id])
 				  continue;
-				thereIsContent = true;
+				somethingIsSelected = true;
 			  }
-			  if(thereIsContent)
+			  if(somethingIsSelected)
 			  {
 				
 				var selectedTabs = titoTMH.getSelectedTabs();
