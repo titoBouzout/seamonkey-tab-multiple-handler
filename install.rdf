@@ -10,8 +10,6 @@
         <em:description>Adds the ability to close and reload mutliples tabs at once.</em:description>
         <em:creator>Tito Bouzout</em:creator>
 		<em:homepageURL>http://titobouzout.github.com/seamonkey-tab-multiple-handler/</em:homepageURL>
-		<em:updateURL>https://github.com/titoBouzout/seamonkey-tab-multiple-handler/raw/gh-pages/update.rdf</em:updateURL>
-		 <em:updateInfoURL>https://github.com/titoBouzout/seamonkey-tab-multiple-handler/raw/gh-pages/update.html</em:updateInfoURL>
 		<!-- new SeaMonkey -->
 		<em:targetApplication>
 			<Description>

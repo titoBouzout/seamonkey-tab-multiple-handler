@@ -14,3 +14,6 @@ GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
 Source-code:
 https://github.com/titoBouzout/seamonkey-tab-multiple-handler
+
+Home-page:
+http://titobouzout.github.com/seamonkey-tab-multiple-handler/
