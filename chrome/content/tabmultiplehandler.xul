@@ -15,6 +15,7 @@
 		  load:function()
 		  {
 			window.removeEventListener('load', titoTMH.load, false);
+			
 	  		document.addEventListener('mouseup', titoTMH._mouseup, true);
 			titoTMH.tabstrip = document.getAnonymousElementByAttribute(titoTMH._el('content'), 'anonid', 'strip');
 			titoTMH.tabstrip.addEventListener('mousedown', titoTMH._mousedown, true);
@@ -334,23 +335,10 @@
 		  },
 		  _getTab:function(aNode)
 		  {
-			try
-			{
-			  if(aNode.tagName == 'tab' || aNode.tagName == 'xul:tab' )
-				return aNode;
-			  else if(aNode.parentNode.tagName == 'tab' || aNode.parentNode.tagName == 'xul:tab')
-				return aNode.parentNode;
-			  else if(aNode.parentNode.parentNode.tagName == 'tab' || aNode.parentNode.parentNode.tagName == 'xul:tab')
-				return aNode.parentNode.parentNode;
-			  else if(aNode.parentNode.parentNode.parentNode.tagName == 'tab' || aNode.parentNode.parentNode.parentNode.tagName == 'xul:tab' )
-				return aNode.parentNode.parentNode.parentNode;
-			  else
-				return false;
-			}
-			catch(e)
-			{
-			  return false;
-			}
+			var node = aNode;
+			while(node && node.localName != "tab")
+			  node = node.parentNode;
+			return node; // returns null if no ancestor is a tab
 		  },
 		  _el:function(aElement)
 		  {
