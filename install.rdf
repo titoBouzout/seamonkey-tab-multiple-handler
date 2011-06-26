@@ -6,7 +6,7 @@
     <Description about="urn:mozilla:install-manifest">
         <em:id>tito@tabmultiplehandler</em:id>
         <em:name>Tab Multiple Handler</em:name>
-        <em:version>0</em:version>
+        <em:version>0.1</em:version>
         <em:description>Adds the ability to close and reload mutliples tabs at once.</em:description>
         <em:creator>Tito Bouzout</em:creator>
 		<em:homepageURL>http://titobouzout.github.com/seamonkey-tab-multiple-handler/</em:homepageURL>
@@ -15,7 +15,7 @@
 			<Description>
 				<em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
 				<em:minVersion>2.0</em:minVersion>
-				<em:maxVersion>10</em:maxVersion>
+				<em:maxVersion>3.0</em:maxVersion>
 			</Description>
 		</em:targetApplication>
     </Description>
