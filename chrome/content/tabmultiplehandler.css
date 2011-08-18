@@ -1,9 +1,8 @@
 
-tab[tab-multiple-handler-selected],
-tab[tab-multiple-handler-selected] > *,
-tab[tab-multiple-handler-selected] > * > *,
-tab[tab-multiple-handler-selected] > * > * > *,
-tab[tab-multiple-handler-selected] > * > * > * > *
+tab[tab-multiple-handler-selected] > hbox,
+tab[tab-multiple-handler-selected] > toolbarbutton,
+tab[tab-multiple-handler-selected][class="tabbrowser-tab tabmail-tab icon-holder"],
+tab[tab-multiple-handler-selected][class="tabbrowser-tab"]
 {
   color:HighlightText !important;
   

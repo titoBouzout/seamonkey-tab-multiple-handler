@@ -17,3 +17,6 @@ https://github.com/titoBouzout/seamonkey-tab-multiple-handler
 
 Home-page:
 http://titobouzout.github.com/seamonkey-tab-multiple-handler/
+
+Mozillazine Thread:
+http://forums.mozillazine.org/viewtopic.php?f=3&t=2236433
